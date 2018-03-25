@@ -9,7 +9,9 @@ namespace Lab04
         {
             MenuLoop();
         }
-
+        /// <summary>
+        /// Menu loop logic intended to provide error checking and repeatabilitys
+        /// </summary>
         public static void MenuLoop()
         {
             bool loop = true;
@@ -32,7 +34,7 @@ namespace Lab04
                 }
                 else if (startGame == "n")
                 {
-                    loop = false;
+                    Environment.Exit(0);
                 }
                 else
                 {
@@ -40,26 +42,30 @@ namespace Lab04
                 }
             }
         }
-
+        /// <summary>
+        /// Player object instantiation logic with error checking and correction
+        /// </summary>
+        /// <param name="playerNum"></param>
+        /// <returns></returns>
         public static Player PlayerSetup(string playerNum)
         {
             try
             {
                 Console.WriteLine($"Player {playerNum} please state your name.");
                 string playerName = Console.ReadLine();
-                string playerSymbol = "X";
+                string playerSymbol = "X"; //Defult player symbol
                 while (true)
                 {
-                    Console.WriteLine($"Player {playerNum} please chose a non-numeric symbol to represetn your markers.");
+                    Console.WriteLine($"Player {playerNum} please chose a non-numeric, single character symbol to represetn your markers.");
                     playerSymbol = Console.ReadLine();
-                    if (playerSymbol.Length > 1 && !(Regex.IsMatch(playerSymbol, @"[0-9]")))
+                    if (playerSymbol.Length > 1 && !(Regex.IsMatch(playerSymbol, @"[0-9]"))) //TODO Regex not yet working correctly
                     {
                         Console.WriteLine("I'm sorry that is not a valid response");
                         Console.WriteLine(); //Console formating
                     }
                     else
                     {
-                        break;
+                        break; //End the loop
                     }
                 }
                 return new Player(playerName, playerSymbol);
@@ -70,7 +76,11 @@ namespace Lab04
                 throw;
             }
         }
-
+        /// <summary>
+        /// Game loop logic with move, new game and exit options
+        /// </summary>
+        /// <param name="playerOne"></param>
+        /// <param name="playerTwo"></param>
         public static void GameLoop(Player playerOne, Player playerTwo)
         {
             GameBoard gameBoard = new GameBoard();
@@ -80,7 +90,7 @@ namespace Lab04
             while (winCheck)
             {
                 MakeMove(playerOne, gameBoard);
-                if (gameBoard.CheckWinner(gameBoard.Board))
+                if (gameBoard.CheckWinner(gameBoard.Board)) //Checks for a winner. If found break the loop
                 {
                     winCheck = false;
                     winner = playerOne.Name;
@@ -92,26 +102,50 @@ namespace Lab04
                     winner = playerTwo.Name;
                 }
             }
-            Console.WriteLine($"The winner is {winner}\n\n1) Play again\n2) Return to menu");
+            try
+            {
+                while (true) //New game or exit loop
+                {
+                    Console.WriteLine(gameBoard.StringBoard(gameBoard.Board)); //Display current board state
+                    Console.WriteLine($"The winner is {winner}\n\n1) Play again\n2) Return to menu");
+                    int playerPath = int.Parse(Console.ReadLine()); //user choice variable
+                    if (playerPath == 1)
+                    {
+                        GameLoop(playerOne, playerTwo); //Play a new game with the same players
+                    }
+                    if (playerPath == 2)
+                    {
+                        MenuLoop(); //Exit to menu
+                    }
+                }
+            }
+            catch (Exception)
+            {
 
+                throw;
+            }
         }
-
+        /// <summary>
+        /// Move structure and exit options
+        /// </summary>
+        /// <param name="player"></param>
+        /// <param name="gameBoard"></param>
         public static void MakeMove(Player player, GameBoard gameBoard)
         {
             try
             {
                 Console.WriteLine(); //Console formating
-                Console.WriteLine(gameBoard.StringBoard(gameBoard.Board));
+                Console.WriteLine(gameBoard.StringBoard(gameBoard.Board)); //Display current board state
                 Console.WriteLine(); //Console formating
                 Console.WriteLine($"{player.Name} please make your move by choosing a space. Enter 9 to go back to the menu.");
-                int target = int.Parse(Console.ReadLine());
+                int target = int.Parse(Console.ReadLine()); //player choice variable
                 if (target == 9)
                 {
-                    MenuLoop();
+                    MenuLoop(); //Exit to menu
                 }
                 else
                 {
-                    gameBoard.UpdateBoard(target, player.Symbol);
+                    gameBoard.Board = gameBoard.UpdateBoard(target, player.Symbol); //Update the board state
                 }
             }
             catch (Exception)

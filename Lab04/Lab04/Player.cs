@@ -6,6 +6,7 @@ namespace Lab04
 {
     public class Player
     {
+        
         public Player(string name, string symbol)
         {
             Name = name;
