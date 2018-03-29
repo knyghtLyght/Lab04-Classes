@@ -40,5 +40,21 @@ namespace Lab4Test
             Assert.Equal(new string[3, 3] { { "|0|", "|1|", "|2|" }, { "|3|", "|4|", "|5|" }, { "|6|", "|7|", "|#|" } },
                 gameBoard.UpdateBoard(8, "#"));
         }
+
+        [Fact]
+        public void CanMakeGameBoard()
+        {
+            Assert.IsNotType<GameBoard>(new GameBoard());
+        }
+
+        [Theory]
+        [InlineData("Kevin", "&")]
+        [InlineData("Peter", "*")]
+        [InlineData("Amanda", "?")]
+
+        public void CanMakePlayr(string playerName, string playerSymbol)
+        {
+            Assert.IsType<Player>(new Player(playerName, playerSymbol));
+        }
     }
 }
